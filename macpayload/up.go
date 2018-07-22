@@ -119,6 +119,16 @@ func ParseUp(p, nwkskey, appskey []byte) (DataUp, error) {
 	if len(p) < 12 {
 		return nil, fmt.Errorf("payload should have length at least 12: %d", len(p))
 	}
+
+	return dataUp(temp), nil
+}
+
+func ParseUpEncrypted(p, nwkskey, appskey []byte) (DataUp, error) {
+	temp := make([]byte, len(p))
+	copy(temp, p)
+	if len(p) < 12 {
+		return nil, fmt.Errorf("payload should have length at least 12: %d", len(p))
+	}
 	fheader := fhdr.ParseUp(p)
 
 	if len(p) > 1+7+int(fheader.FOptsLen())+4 { //have Fport

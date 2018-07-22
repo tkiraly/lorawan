@@ -46,14 +46,18 @@ func New(Major mhdr.MajorVersion, appnonce, netid, devaddr []byte, rx1droffset, 
 }
 
 //Parse converts a byte array to a Join Accept
-func Parse(bb, key []byte) (JoinAccept, error) {
+func Parse(bb []byte) (JoinAccept, error) {
 	b := make([]byte, len(bb))
 	copy(b, bb)
 	if len(b) != 17 && len(b) != 33 {
 		return nil, fmt.Errorf("payload should have length 17 or 33 but have: %d", len(b))
 	}
-	p := encrypt(b, key)
-	return joinAccept(p), nil
+	return joinAccept(b), nil
+}
+
+func ParseEncrypted(bb, key []byte) (JoinAccept, error) {
+	p := encrypt(bb, key)
+	return Parse(p)
 }
 
 func encrypt(payload, key []byte) []byte {

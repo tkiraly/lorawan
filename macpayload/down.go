@@ -120,6 +120,15 @@ func ParseDown(p, nwkskey, appskey []byte) (DataDown, error) {
 	if len(p) < 12 {
 		return nil, fmt.Errorf("payload should have length at least 12: %d", len(p))
 	}
+	return dataDown(temp), nil
+}
+
+func ParseDownEncrypted(p, nwkskey, appskey []byte) (DataDown, error) {
+	temp := make([]byte, len(p))
+	copy(temp, p)
+	if len(p) < 12 {
+		return nil, fmt.Errorf("payload should have length at least 12: %d", len(p))
+	}
 	fheader := fhdr.ParseDown(p)
 
 	if len(p) > 1+7+int(fheader.FOptsLen())+4 { //have Fport
@@ -132,14 +141,14 @@ func ParseDown(p, nwkskey, appskey []byte) (DataDown, error) {
 				payload := encrypt(p[start:finish], false, fheader.DevAddr(), uint32(fheader.FCnt()), nwkskey)
 				copy(temp[start:finish], payload)
 			} else {
-				return nil, fmt.Errorf("nwkskey must have a valid key")
+				return nil, fmt.Errorf("nwkskey must be a valid key")
 			}
 		} else {
 			if appskey != nil {
 				payload := encrypt(p[start:finish], false, fheader.DevAddr(), uint32(fheader.FCnt()), appskey)
 				copy(temp[start:finish], payload)
 			} else {
-				return nil, fmt.Errorf("appskey must have a valid key")
+				return nil, fmt.Errorf("appskey must be a valid key")
 			}
 		}
 	}
