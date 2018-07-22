@@ -8,17 +8,19 @@ import (
 )
 
 //GenerateNwkSKey generates network session key based on Join Request and Join Accept
+//expects encrypted join accept
 func GenerateNwkSKey(jr, ja, appkey []byte) ([]byte, error) {
 	return generatekey(0x01, jr, ja, appkey)
 }
 
 //GenerateAppSKey generates application session key based on Join Request and Join Accept
+//expects encrypted join accept
 func GenerateAppSKey(jr, ja, appkey []byte) ([]byte, error) {
 	return generatekey(0x02, jr, ja, appkey)
 }
 
 func generatekey(lead byte, jr, ja, appkey []byte) ([]byte, error) {
-	pja, err := joinaccept.Parse(ja, appkey)
+	pja, err := joinaccept.ParseEncrypted(ja, appkey)
 	if err != nil {
 		return nil, err
 	}
