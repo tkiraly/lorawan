@@ -78,7 +78,7 @@ func NewDown(devaddr []byte, fcnt uint16, fopts []commands.Fopter, adr,
 }
 
 func (f fHDRDown) String() string {
-	return fmt.Sprintf("DevAddr: %s; FCnt: %d; ADR: %t; FPending: %t; ACK: %t; FOptsLen: %d, FOpts: %s\n",
+	return fmt.Sprintf("DevAddr: %s; FCnt: %d; ADR: %t; FPending: %t; ACK: %t; FOptsLen: %d, FOpts: %s",
 		strings.ToUpper(hex.EncodeToString(f.DevAddr())),
 		f.FCnt(),
 		f.ADR(),
