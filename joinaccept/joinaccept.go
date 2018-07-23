@@ -32,7 +32,7 @@ type joinAccept struct {
 //New create a new Join Accept
 func New(Major mhdr.MajorVersion, appnonce, netid, devaddr []byte, rx1droffset, rx2datarate, rxdelay byte,
 	cflist []uint32, key []byte) JoinAccept {
-	ja := make([]byte, 17)
+	ja := make([]byte, 13)
 	ja[0] = mhdr.New(mhdr.JoinAcceptMessageType, mhdr.LoRaWANR1MajorVersion).ByteArray()[0]
 	copy(ja[1:4], util.Bytereverse(appnonce))
 	copy(ja[4:7], util.Bytereverse(netid))
@@ -44,7 +44,9 @@ func New(Major mhdr.MajorVersion, appnonce, netid, devaddr []byte, rx1droffset, 
 		binary.BigEndian.PutUint32(ch, cflist[i])
 		ja = append(ja, util.Bytereverse(ch[1:])...)
 	}
+	ja = append(ja, 0x00) //CFListType
 	if key != nil {
+		ja = append(ja, make([]byte, 4)...)
 		m, err := mic.Calculate(ja, key)
 		if err != nil {
 			panic(err)
