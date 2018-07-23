@@ -20,7 +20,7 @@ func GenerateAppSKey(jr, ja, appkey []byte) ([]byte, error) {
 }
 
 func generatekey(lead byte, jr, ja, appkey []byte) ([]byte, error) {
-	pja, err := joinaccept.ParseEncrypted(ja, appkey)
+	pja, err := joinaccept.Parse(ja, appkey)
 	if err != nil {
 		return nil, err
 	}
