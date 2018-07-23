@@ -17,7 +17,7 @@ func Calculate(payload, key []byte) ([]byte, error) {
 		fheader := fhdr.ParseDown(payload[1:])
 		B = append(B, 1)
 		B = append(B, util.Bytereverse(fheader.DevAddr())...)
-		fcnt := make([]byte, 2)
+		fcnt := make([]byte, 4)
 		binary.LittleEndian.PutUint16(fcnt, fheader.FCnt())
 		B = append(B, fcnt...)
 		B = append(B, 0)
@@ -41,7 +41,10 @@ func Calculate(payload, key []byte) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	result.Write(B)
+	_, err = result.Write(B)
+	if err != nil {
+		panic(err)
+	}
 	rr := result.Sum([]byte{})
 	return rr[:4], nil
 }
