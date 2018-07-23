@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/tkiraly/lorawan/mhdr"
+	"github.com/tkiraly/lorawan/mic"
 	"github.com/tkiraly/lorawan/util"
 )
 
@@ -24,7 +25,9 @@ type JoinAccept interface {
 	MIC() []byte
 }
 
-type joinAccept []byte
+type joinAccept struct {
+	bytes, key []byte
+}
 
 //New create a new Join Accept
 func New(Major mhdr.MajorVersion, appnonce, netid, devaddr []byte, rx1droffset, rx2datarate, rxdelay byte,
@@ -41,63 +44,94 @@ func New(Major mhdr.MajorVersion, appnonce, netid, devaddr []byte, rx1droffset, 
 		binary.BigEndian.PutUint32(ch, cflist[i])
 		ja = append(ja, util.Bytereverse(ch[1:])...)
 	}
-	ja = encrypt(ja, key)
-	return joinAccept(ja)
+	if key != nil {
+		m, err := mic.Calculate(ja, key)
+		if err != nil {
+			panic(err)
+		}
+		copy(ja[len(ja)-4:], m)
+	}
+	return joinAccept{bytes: ja, key: key}
 }
 
 //Parse converts a byte array to a Join Accept
-func Parse(bb []byte) (JoinAccept, error) {
+func Parse(bb, key []byte) (JoinAccept, error) {
+	if key == nil {
+		if len(bb) != 13 && len(bb) != 29 {
+			return nil, fmt.Errorf("payload should have length 13 or 29 but have: %d", len(bb))
+		}
+		return joinAccept{bytes: bb, key: key}, nil
+	}
+	if len(bb) != 17 && len(bb) != 33 {
+		return nil, fmt.Errorf("payload should have length 17 or 33 but have: %d", len(bb))
+	}
 	b := make([]byte, len(bb))
 	copy(b, bb)
-	if len(b) != 17 && len(b) != 33 {
-		return nil, fmt.Errorf("payload should have length 17 or 33 but have: %d", len(b))
-	}
-	return joinAccept(b), nil
+	acc := joinAccept{bytes: b, key: key}
+	acc.encrypt()
+	return acc, nil
 }
 
-func ParseEncrypted(bb, key []byte) (JoinAccept, error) {
-	p := encrypt(bb, key)
-	return Parse(p)
+func (ja *joinAccept) encrypt() {
+	if ja.key != nil {
+		cipher, _ := aes.NewCipher(ja.key)
+		i := 1
+		if len(ja.bytes) > 17 {
+			i++
+		}
+		r := make([]byte, 16*i)
+		for index := 0; index < i; index++ {
+			cipher.Encrypt(r[16*index:16*index+16],
+				ja.bytes[16*index+1:16*index+17])
+		}
+		ja.bytes = []byte{ja.bytes[0]}
+		ja.bytes = append(ja.bytes, r...)
+	}
 }
 
-func encrypt(payload, key []byte) []byte {
-	if len(payload) > 17 {
-		cipher, _ := aes.NewCipher(key)
-		r := make([]byte, 32)
-		cipher.Encrypt(r[0:16], payload[1:17])
-		cipher.Encrypt(r[16:32], payload[17:33])
-		return append([]byte{payload[0]}, r...)
+func (ja joinAccept) decrypt() []byte {
+	if ja.key != nil {
+		cipher, _ := aes.NewCipher(ja.key)
+		i := 1
+		if len(ja.bytes) > 17 {
+			i++
+		}
+		r := make([]byte, 16*i)
+		for index := 0; index < i; index++ {
+			cipher.Decrypt(r[16*index:16*index+16],
+				ja.bytes[16*index+1:16*index+17])
+		}
+		a := []byte{ja.bytes[0]}
+		a = append(a, r...)
+		return a
 	}
-	cipher, _ := aes.NewCipher(key)
-	r := make([]byte, 16)
-	cipher.Encrypt(r[0:16], payload[1:17])
-	return append([]byte{payload[0]}, r...)
+	return nil
 }
 
 func (ja joinAccept) AppNonce() []byte {
-	return util.Bytereverse(ja[1:4])
+	return util.Bytereverse(ja.bytes[1:4])
 }
 func (ja joinAccept) NetID() []byte {
-	return util.Bytereverse(ja[4:7])
+	return util.Bytereverse(ja.bytes[4:7])
 }
 func (ja joinAccept) DevAddr() []byte {
-	return util.Bytereverse(ja[7:11])
+	return util.Bytereverse(ja.bytes[7:11])
 }
 func (ja joinAccept) DlSettingsRX1DRoffset() byte {
-	return (ja[11] >> 4) & 0x07
+	return (ja.bytes[11] >> 4) & 0x07
 }
 func (ja joinAccept) DlSettingsRX2Datarate() byte {
-	return ja[11] & 0x0F
+	return ja.bytes[11] & 0x0F
 }
 func (ja joinAccept) RxDelay() byte {
-	return ja[12]
+	return ja.bytes[12]
 }
 func (ja joinAccept) CFlist() []uint32 {
-	if len(ja) > 17 {
+	if len(ja.bytes) > 17 {
 		chs := make([]uint32, 5)
 		temp := make([]byte, 4)
 		for i := 0; i < 5; i++ {
-			copy(temp, ja[13+(3*i):16+(3*i)])
+			copy(temp, ja.bytes[13+(3*i):16+(3*i)])
 			chs[i] = binary.LittleEndian.Uint32(temp)
 		}
 		return chs
@@ -105,19 +139,19 @@ func (ja joinAccept) CFlist() []uint32 {
 	return nil
 }
 func (ja joinAccept) MIC() []byte {
-	if len(ja) > 17 {
-		return ja[29:]
+	if len(ja.bytes) > 17 {
+		return ja.bytes[29:]
 	}
-	return ja[13:]
+	return ja.bytes[13:]
 }
 
 func (ja joinAccept) MType() mhdr.MType {
-	m := mhdr.Parse(ja[0])
+	m := mhdr.Parse(ja.bytes[0])
 	return m.MType()
 }
 
 func (ja joinAccept) Major() mhdr.MajorVersion {
-	m := mhdr.Parse(ja[0])
+	m := mhdr.Parse(ja.bytes[0])
 	return m.Major()
 }
 
@@ -135,5 +169,6 @@ func (ja joinAccept) String() string {
 }
 
 func (ja joinAccept) ByteArray() []byte {
-	return ja
+
+	return ja.decrypt()
 }
