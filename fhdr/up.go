@@ -77,7 +77,7 @@ func NewUp(devaddr []byte, fcnt uint16, fopts []commands.Fopter, adr, ack, adrac
 }
 
 func (f fHDRUp) String() string {
-	return fmt.Sprintf("DevAddr: %s; FCnt: %d; ADR: %t; ADRACKReq: %t; ACK: %t; FOptsLen: %d, FOpts: %s\n",
+	return fmt.Sprintf("DevAddr: %s; FCnt: %d; ADR: %t; ADRACKReq: %t; ACK: %t; FOptsLen: %d, FOpts: %s;",
 		strings.ToUpper(hex.EncodeToString(f.DevAddr())),
 		f.FCnt(),
 		f.ADR(),
