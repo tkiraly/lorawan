@@ -158,7 +158,7 @@ func (ja joinAccept) Major() mhdr.MajorVersion {
 }
 
 func (ja joinAccept) String() string {
-	return fmt.Sprintf("%s: AppNonce: %s; NetID: %s; DevAddr: %s; RX1DRoffset: %s; RX2Datarate: %s; RxDelay: %s; MIC: %s; CFList: %v\n",
+	return fmt.Sprintf("%s: AppNonce: %s; NetID: %s; DevAddr: %s; RX1DRoffset: %s; RX2Datarate: %s; RxDelay: %s; MIC: %s; CFList: %v",
 		ja.MType(),
 		strings.ToUpper(hex.EncodeToString(ja.AppNonce())),
 		strings.ToUpper(hex.EncodeToString(ja.NetID())),
