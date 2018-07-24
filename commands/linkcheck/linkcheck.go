@@ -53,7 +53,7 @@ func (c linkCheckAns) ByteArray() []byte {
 }
 
 func (c linkCheckAns) Len() uint8 {
-	return Reqlen
+	return Anslen
 }
 
 func (c linkCheckAns) Margin() uint8 {
