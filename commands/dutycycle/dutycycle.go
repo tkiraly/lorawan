@@ -25,7 +25,7 @@ func (c dutyCycleReq) Len() uint8 {
 }
 
 func (c dutyCycleReq) String() string {
-	return fmt.Sprintf("%s!", "DutyCycleReq")
+	return fmt.Sprintf("%s! MaxDCycle: %d", "DutyCycleReq", c.MaxDCycle())
 }
 
 func ParseReq(bb []byte) commands.Fopter {
@@ -58,7 +58,7 @@ func (c dutyCycleAns) ByteArray() []byte {
 }
 
 func (c dutyCycleAns) Len() uint8 {
-	return Reqlen
+	return Anslen
 }
 
 func (c dutyCycleAns) String() string {
