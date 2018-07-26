@@ -53,7 +53,7 @@ func (c devStatusAns) ByteArray() []byte {
 }
 
 func (c devStatusAns) Len() uint8 {
-	return Reqlen
+	return Anslen
 }
 
 func (c devStatusAns) Battery() uint8 {
@@ -65,7 +65,7 @@ func (c devStatusAns) Margin() uint8 {
 }
 
 func (c devStatusAns) String() string {
-	return fmt.Sprintf("%s! Battery: %d, Margin: %d;", "DevStatusAns", c.Battery(), c.Margin())
+	return fmt.Sprintf("%s! Battery: %d, Margin: %d", "DevStatusAns", c.Battery(), c.Margin())
 }
 
 func ParseAns(bb []byte) commands.Fopter {
