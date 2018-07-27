@@ -28,7 +28,7 @@ func (c rXParamSetupReq) Len() uint8 {
 }
 
 func (c rXParamSetupReq) String() string {
-	return fmt.Sprintf("%s! RX1DRoffset: %d, RX2DataRate: %d, Frequency: %d;", "RXParamSetupReq",
+	return fmt.Sprintf("%s! RX1DRoffset: %d, RX2DataRate: %d, Frequency: %d", "RXParamSetupReq",
 		c.RX1DRoffset(),
 		c.RX2DataRate(),
 		c.Frequency(),
@@ -79,11 +79,11 @@ func (c rXParamSetupAns) ByteArray() []byte {
 }
 
 func (c rXParamSetupAns) Len() uint8 {
-	return Reqlen
+	return Anslen
 }
 
 func (c rXParamSetupAns) String() string {
-	return fmt.Sprintf("%s! RX1DRoffsetACK: %t, RX2DatarateACK: %t, ChannelACK: %t;", "RXParamSetupAns",
+	return fmt.Sprintf("%s! RX1DRoffsetACK: %t, RX2DatarateACK: %t, ChannelACK: %t", "RXParamSetupAns",
 		c.RX1DRoffsetACK(), c.RX2DatarateACK(), c.ChannelACK())
 }
 
@@ -93,16 +93,26 @@ func ParseAns(bb []byte) commands.Fopter {
 	return rXParamSetupAns(b)
 }
 
-func NewAns() RXParamSetupAns {
-	return rXParamSetupAns([]byte{commands.RXParamSetupAnsCommand})
+func NewAns(rx1droffsetack, rx2datarateack, channelack bool) RXParamSetupAns {
+	temp := byte(0)
+	if rx1droffsetack {
+		temp |= 0x04
+	}
+	if rx2datarateack {
+		temp |= 0x02
+	}
+	if channelack {
+		temp |= 0x01
+	}
+	return rXParamSetupAns([]byte{commands.RXParamSetupAnsCommand, temp})
 }
 
 func (c rXParamSetupAns) RX1DRoffsetACK() bool {
-	return c[1] == 0x04
+	return (c[1] & 0x04) == 0x04
 }
 func (c rXParamSetupAns) RX2DatarateACK() bool {
-	return c[1] == 0x02
+	return (c[1] & 0x02) == 0x02
 }
 func (c rXParamSetupAns) ChannelACK() bool {
-	return c[1] == 0x01
+	return (c[1] & 0x01) == 0x01
 }
