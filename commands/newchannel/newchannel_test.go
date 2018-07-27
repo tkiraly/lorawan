@@ -293,6 +293,10 @@ func TestNewAns(t *testing.T) {
 			args{dataraterangeok: true, channelfrequencyok: false},
 			newChannelAns([]byte{commands.NewChannelAnsCommand, 0x02}),
 		},
+		{"basic",
+			args{dataraterangeok: true, channelfrequencyok: true},
+			newChannelAns([]byte{commands.NewChannelAnsCommand, 0x03}),
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
