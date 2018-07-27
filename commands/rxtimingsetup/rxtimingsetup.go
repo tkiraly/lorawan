@@ -25,7 +25,7 @@ func (c rxTimingSetupReq) Len() uint8 {
 }
 
 func (c rxTimingSetupReq) String() string {
-	return fmt.Sprintf("%s!", "RxTimingSetupReq")
+	return fmt.Sprintf("%s! Del: %d", "RxTimingSetupReq", c.Del())
 }
 
 func ParseReq(bb []byte) commands.Fopter {
@@ -57,7 +57,7 @@ func (c rxTimingSetupAns) ByteArray() []byte {
 }
 
 func (c rxTimingSetupAns) Len() uint8 {
-	return Reqlen
+	return Anslen
 }
 
 func (c rxTimingSetupAns) String() string {
