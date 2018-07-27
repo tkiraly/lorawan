@@ -7,7 +7,7 @@ import (
 	"github.com/tkiraly/lorawan/commands"
 )
 
-const Reqlen = 7
+const Reqlen = 6
 
 type NewChannelReq interface {
 	commands.Fopter
@@ -29,7 +29,8 @@ func (c newChannelReq) Len() uint8 {
 }
 
 func (c newChannelReq) String() string {
-	return fmt.Sprintf("%s!", "NewChannelReq")
+	return fmt.Sprintf("%s! ChIndex: %d, Freq: %d, MaxDR: %d, MinDR: %d", "NewChannelReq",
+		c.ChIndex(), c.Freq(), c.MaxDR(), c.MinDR())
 }
 
 func ParseReq(bb []byte) commands.Fopter {
@@ -46,7 +47,7 @@ func NewReq(chindex uint8, freq uint32, maxdr, mindr uint8) NewChannelReq {
 		temp[0],
 		temp[1],
 		temp[2],
-		(maxdr << 4) & mindr,
+		(maxdr << 4) | mindr,
 	})
 }
 
@@ -79,19 +80,11 @@ func (c newChannelAns) ByteArray() []byte {
 }
 
 func (c newChannelAns) Len() uint8 {
-	return Reqlen
-}
-
-func (c newChannelAns) Battery() uint8 {
-	return c[1]
-}
-
-func (c newChannelAns) Margin() uint8 {
-	return c[2]
+	return Anslen
 }
 
 func (c newChannelAns) String() string {
-	return fmt.Sprintf("%s! Battery: %d, Margin: %d;", "NewChannelAns", c.Battery(), c.Margin())
+	return fmt.Sprintf("%s! DataRateRangeOK: %t, ChannelFrequencyOK: %t", "NewChannelAns", c.DataRateRangeOK(), c.ChannelFrequencyOK())
 }
 
 func ParseAns(bb []byte) commands.Fopter {
