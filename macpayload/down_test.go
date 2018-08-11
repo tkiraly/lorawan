@@ -232,6 +232,14 @@ func Test_dataDown_String(t *testing.T) {
 			},
 			"DataDown: MHDR: MType: UnconfirmedDataDownMessageType; Major: LoRaWANR1MajorVersion;; FHDRUp: DevAddr: 49810545; FCnt: 0; ADR: true; FPending: false; ACK: true; FOptsLen: 0, FOpts: []; FPort: 66; FRMPayload: 88888888; MIC: 4E306DD0",
 		},
+		{"no payload and port",
+			fields{
+				bytes:   []byte{0xa0, 0x2b, 0xf0, 0x90, 0xa8, 0xa1, 0x07, 0x00, 0x06, 0x25, 0x07, 0x42, 0x83},
+				nwkskey: []byte{0x56, 0xAA, 0x4A, 0x88, 0xB9, 0xE7, 0x84, 0x72, 0xD5, 0x00, 0xCB, 0xFD, 0xE9, 0xC0, 0x48, 0x36},
+				appskey: []byte{0xC6, 0x68, 0xDC, 0xF1, 0xB5, 0xDE, 0xB3, 0x5B, 0xC1, 0x1B, 0xCF, 0xC7, 0xE4, 0xFB, 0x67, 0xB3},
+			},
+			"DataDown: MHDR: MType: ConfirmedDataDownMessageType; Major: LoRaWANR1MajorVersion;; FHDRUp: DevAddr: A890F02B; FCnt: 7; ADR: true; FPending: false; ACK: true; FOptsLen: 1, FOpts: [DevStatusReq!]; FPort: none; FRMPayload: ; MIC: 25074283",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
