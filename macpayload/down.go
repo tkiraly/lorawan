@@ -3,6 +3,7 @@ package macpayload
 import (
 	"encoding/hex"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/tkiraly/lorawan/commands"
@@ -73,14 +74,14 @@ func (d dataDown) MIC() []byte {
 }
 
 func (du dataDown) String() string {
-	var fport *byte
+	fport := "none"
 	if du.FPort() != nil {
-		fport = du.FPort()
+		fport = strconv.Itoa(int(*du.FPort()))
 	}
-	return fmt.Sprintf("DataDown: MHDR: %s; FHDRUp: %s; FPort: %d; FRMPayload: %s; MIC: %s",
+	return fmt.Sprintf("DataDown: MHDR: %s; FHDRUp: %s; FPort: %s; FRMPayload: %s; MIC: %s",
 		mhdr.Parse(du.bytes[0]),
 		fhdr.ParseDown(du.bytes[1:]),
-		*fport,
+		fport,
 		strings.ToUpper(hex.EncodeToString(du.FRMPayload())),
 		strings.ToUpper(hex.EncodeToString(du.MIC())))
 }
