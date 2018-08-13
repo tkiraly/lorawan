@@ -230,7 +230,7 @@ func Test_dataUp_String(t *testing.T) {
 				nwkskey: []byte{0x99, 0xD5, 0x84, 0x93, 0xD1, 0x20, 0x5B, 0x43, 0xEF, 0xF9, 0x38, 0xF0, 0xF6, 0x6C, 0x33, 0x9E},
 				appskey: []byte{0x0A, 0x50, 0x15, 0x24, 0xF8, 0xEA, 0x5F, 0xCB, 0xF9, 0xBD, 0xB5, 0xAD, 0x7D, 0x12, 0x6F, 0x75},
 			},
-			"DataDown! MType: UnconfirmedDataUpMessageType; Major: LoRaWANR1MajorVersion;; FHDRUp: DevAddr: 260413AE; FCnt: 0; ADR: true; ADRACKReq: false; ACK: false; FOptsLen: 0, FOpts: [];; FPort: 1; FRMPayload: 61626364656667; MIC: E3268295",
+			"DataUp! MType: UnconfirmedDataUpMessageType; Major: LoRaWANR1MajorVersion;; FHDRUp: DevAddr: 260413AE; FCnt: 0; ADR: true; ADRACKReq: false; ACK: false; FOptsLen: 0, FOpts: [];; FPort: 1; FRMPayload: 61626364656667; MIC: E3268295",
 		},
 	}
 	for _, tt := range tests {
