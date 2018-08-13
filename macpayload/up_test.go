@@ -232,6 +232,14 @@ func Test_dataUp_String(t *testing.T) {
 			},
 			"DataUp! MType: UnconfirmedDataUpMessageType; Major: LoRaWANR1MajorVersion;; FHDRUp: DevAddr: 260413AE; FCnt: 0; ADR: true; ADRACKReq: false; ACK: false; FOptsLen: 0, FOpts: [];; FPort: 1; FRMPayload: 61626364656667; MIC: E3268295",
 		},
+		{"no payload and port",
+			fields{
+				bytes:   []byte{0x40, 0xa7, 0x3d, 0xa4, 0x5f, 0x01, 0x02, 0x00, 0x02, 0x44, 0xcf, 0x5e, 0x17},
+				nwkskey: []byte{0x31, 0x65, 0xD1, 0x6F, 0x7B, 0x82, 0xB3, 0xCD, 0xA7, 0xCE, 0x23, 0x9E, 0x8E, 0xE5, 0xF0, 0xFB},
+				appskey: []byte{0x1F, 0xA0, 0xD2, 0xD2, 0x38, 0xE7, 0x06, 0xE8, 0xFC, 0x68, 0x06, 0x42, 0x78, 0x47, 0xC3, 0xC2},
+			},
+			"DataUp! MType: UnconfirmedDataUpMessageType; Major: LoRaWANR1MajorVersion;; FHDRUp: DevAddr: 5FA43DA7; FCnt: 2; ADR: false; ADRACKReq: false; ACK: false; FOptsLen: 1, FOpts: [LinkCheckReq!];; FPort: none; FRMPayload: ; MIC: 44CF5E17",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
