@@ -118,6 +118,10 @@ func Test_devStatusAns_ByteArray(t *testing.T) {
 			devStatusAns([]byte{commands.DevStatusAnsCommand, 0x56, 0x11}),
 			[]byte{0x06, 0x56, 0x11},
 		},
+		{"basic2",
+			devStatusAns([]byte{commands.DevStatusAnsCommand, 0x11, 0x11}),
+			[]byte{0x06, 0x11, 0x11},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
