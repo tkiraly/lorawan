@@ -97,3 +97,23 @@ func TestNew(t *testing.T) {
 		})
 	}
 }
+
+func Test_mHDR_String(t *testing.T) {
+	tests := []struct {
+		name string
+		m    mHDR
+		want string
+	}{
+		{"basic",
+			mHDR(0x40),
+			"MType: UnconfirmedDataUpMessageType, Major: LoRaWANR1MajorVersion;",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.m.String(); got != tt.want {
+				t.Errorf("mHDR.String() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
