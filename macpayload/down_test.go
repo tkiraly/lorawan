@@ -230,7 +230,7 @@ func Test_dataDown_String(t *testing.T) {
 				nwkskey: []byte{0x15, 0x10, 0xEF, 0x39, 0xE8, 0xCD, 0x3F, 0x04, 0xDD, 0xE2, 0x6B, 0x46, 0x31, 0xA9, 0xE9, 0x3B},
 				appskey: []byte{0xF0, 0xDC, 0x44, 0xD0, 0x9B, 0xB2, 0xD8, 0xE3, 0x03, 0x85, 0x97, 0x5A, 0xE9, 0x98, 0xBC, 0x4A},
 			},
-			"DataDown: MHDR: MType: UnconfirmedDataDownMessageType; Major: LoRaWANR1MajorVersion;; FHDRUp: DevAddr: 49810545; FCnt: 0; ADR: true; FPending: false; ACK: true; FOptsLen: 0, FOpts: []; FPort: 66; FRMPayload: 88888888; MIC: 4E306DD0",
+			"DataDown: MHDR: MType: UnconfirmedDataDownMessageType, Major: LoRaWANR1MajorVersion;; FHDRUp: DevAddr: 49810545; FCnt: 0; ADR: true; FPending: false; ACK: true; FOptsLen: 0, FOpts: []; FPort: 66; FRMPayload: 88888888; MIC: 4E306DD0",
 		},
 		{"no payload and port",
 			fields{
@@ -238,7 +238,7 @@ func Test_dataDown_String(t *testing.T) {
 				nwkskey: []byte{0x56, 0xAA, 0x4A, 0x88, 0xB9, 0xE7, 0x84, 0x72, 0xD5, 0x00, 0xCB, 0xFD, 0xE9, 0xC0, 0x48, 0x36},
 				appskey: []byte{0xC6, 0x68, 0xDC, 0xF1, 0xB5, 0xDE, 0xB3, 0x5B, 0xC1, 0x1B, 0xCF, 0xC7, 0xE4, 0xFB, 0x67, 0xB3},
 			},
-			"DataDown: MHDR: MType: ConfirmedDataDownMessageType; Major: LoRaWANR1MajorVersion;; FHDRUp: DevAddr: A890F02B; FCnt: 7; ADR: true; FPending: false; ACK: true; FOptsLen: 1, FOpts: [DevStatusReq!]; FPort: none; FRMPayload: ; MIC: 25074283",
+			"DataDown: MHDR: MType: ConfirmedDataDownMessageType, Major: LoRaWANR1MajorVersion;; FHDRUp: DevAddr: A890F02B; FCnt: 7; ADR: true; FPending: false; ACK: true; FOptsLen: 1, FOpts: [DevStatusReq!]; FPort: none; FRMPayload: ; MIC: 25074283",
 		},
 	}
 	for _, tt := range tests {
