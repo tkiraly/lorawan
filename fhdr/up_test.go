@@ -4,6 +4,14 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/tkiraly/lorawan/commands/devstatus"
+	"github.com/tkiraly/lorawan/commands/dutycycle"
+	"github.com/tkiraly/lorawan/commands/linkadr"
+	"github.com/tkiraly/lorawan/commands/linkcheck"
+	"github.com/tkiraly/lorawan/commands/newchannel"
+	"github.com/tkiraly/lorawan/commands/rxparamsetup"
+	"github.com/tkiraly/lorawan/commands/rxtimingsetup"
+
 	"github.com/tkiraly/lorawan/commands"
 )
 
@@ -56,6 +64,10 @@ func Test_fHDRUp_FOpts(t *testing.T) {
 		{"basic",
 			fHDRUp([]byte{0xbd, 0x1f, 0x52, 0x48, 0x80, 0x04, 0x00}),
 			nil,
+		},
+		{"basic with fopts",
+			fHDRUp([]byte{0xbd, 0x1f, 0x52, 0x48, 0x81, 0x04, 0x00, 0x02}),
+			[]commands.Fopter{linkcheck.NewReq()},
 		},
 	}
 	for _, tt := range tests {
@@ -175,6 +187,32 @@ func TestNewUp(t *testing.T) {
 			},
 			fHDRUp([]byte{0xbd, 0x1f, 0x52, 0x48, 0x80, 0x04, 0x00}),
 		},
+		{"basic with ack & adrackreq",
+
+			args{
+				devaddr:   []byte{0x48, 0x52, 0x1f, 0xbd},
+				fcnt:      4,
+				fopts:     []commands.Fopter{},
+				adr:       true,
+				ack:       true,
+				adrackreq: true,
+				foptslen:  0,
+			},
+			fHDRUp([]byte{0xbd, 0x1f, 0x52, 0x48, 0xe0, 0x04, 0x00}),
+		},
+		{"basic with ack & adrackreq",
+
+			args{
+				devaddr:   []byte{0x48, 0x52, 0x1f, 0xbd},
+				fcnt:      4,
+				fopts:     []commands.Fopter{linkcheck.NewReq()},
+				adr:       true,
+				ack:       true,
+				adrackreq: true,
+				foptslen:  1,
+			},
+			fHDRUp([]byte{0xbd, 0x1f, 0x52, 0x48, 0xe1, 0x04, 0x00, 0x02}),
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -260,6 +298,38 @@ func TestParseFOptsUp(t *testing.T) {
 		{"basic",
 			args{payload: []byte{}},
 			[]commands.Fopter{},
+		},
+		{"basic-with warning",
+			args{payload: []byte{0x00}},
+			[]commands.Fopter{},
+		},
+		{"linkcheck",
+			args{payload: []byte{0x02}},
+			[]commands.Fopter{linkcheck.NewReq()},
+		},
+		{"linkadr",
+			args{payload: []byte{0x03, 0x06}},
+			[]commands.Fopter{linkadr.NewAns(true, true, false)},
+		},
+		{"dutycycle",
+			args{payload: []byte{0x04}},
+			[]commands.Fopter{dutycycle.NewAns()},
+		},
+		{"rxparamsetup",
+			args{payload: []byte{0x05, 0x02}},
+			[]commands.Fopter{rxparamsetup.NewAns(false, true, false)},
+		},
+		{"devstatus",
+			args{payload: []byte{0x06, 0x66, 0x02}},
+			[]commands.Fopter{devstatus.NewAns(0x66, 0x02)},
+		},
+		{"newchannel",
+			args{payload: []byte{0x07, 0x02}},
+			[]commands.Fopter{newchannel.NewAns(true, false)},
+		},
+		{"rxtimingsetup",
+			args{payload: []byte{0x08}},
+			[]commands.Fopter{rxtimingsetup.NewAns()},
 		},
 	}
 	for _, tt := range tests {
