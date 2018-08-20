@@ -21,6 +21,8 @@ const (
 	NewChannelAnsCommand
 	//RXTimingSetupAnsCommand is the CID of RXTimingSetupAns
 	RxTimingSetupAnsCommand
+	//TxParamSetupAnsCommand is the CID of TxParamSetupAns
+	TxParamSetupAnsCommand
 )
 
 const (
@@ -38,4 +40,6 @@ const (
 	NewChannelReqCommand
 	//RxTimingSetupReqCommand is the CID of TXTimingSetupReq
 	RxTimingSetupReqCommand
+	//TxParamSetupReqCommand is the CID of TxParamSetupReq
+	TxParamSetupReqCommand
 )
