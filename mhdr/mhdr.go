@@ -72,7 +72,7 @@ func (m mHDR) Major() MajorVersion {
 }
 
 func (m mHDR) String() string {
-	return fmt.Sprintf("MType: %s; Major: %s;", m.MType(), m.Major())
+	return fmt.Sprintf("MType: %s, Major: %s;", m.MType(), m.Major())
 }
 
 func (m mHDR) ByteArray() []byte {
