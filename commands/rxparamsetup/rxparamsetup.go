@@ -55,7 +55,7 @@ func NewReq(rx1droffset, rx2datarate uint8, frequency uint32) RXParamSetupReq {
 	temp := make([]byte, 4)
 	binary.LittleEndian.PutUint32(temp, frequency)
 	return rXParamSetupReq([]byte{commands.RXParamSetupReqCommand,
-		(rx1droffset << 4) & rx2datarate,
+		(rx1droffset << 4) | rx2datarate,
 		temp[0],
 		temp[1],
 		temp[2],
