@@ -4,6 +4,14 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/tkiraly/lorawan/commands/devstatus"
+	"github.com/tkiraly/lorawan/commands/dutycycle"
+	"github.com/tkiraly/lorawan/commands/linkadr"
+	"github.com/tkiraly/lorawan/commands/linkcheck"
+	"github.com/tkiraly/lorawan/commands/newchannel"
+	"github.com/tkiraly/lorawan/commands/rxparamsetup"
+	"github.com/tkiraly/lorawan/commands/rxtimingsetup"
+
 	"github.com/tkiraly/lorawan/commands"
 )
 
@@ -174,6 +182,30 @@ func TestNewDown(t *testing.T) {
 			},
 			fHDRDown([]byte{0xbd, 0x1f, 0x52, 0x48, 0xa0, 0x02, 0x00}),
 		},
+		{"basic-with fpending",
+			args{
+				devaddr:  []byte{0x48, 0x52, 0x1f, 0xbd},
+				fcnt:     2,
+				fopts:    []commands.Fopter{},
+				adr:      true,
+				ack:      true,
+				fpending: true,
+				foptslen: 0,
+			},
+			fHDRDown([]byte{0xbd, 0x1f, 0x52, 0x48, 0xb0, 0x02, 0x00}),
+		},
+		{"basic-with devstatusreq",
+			args{
+				devaddr:  []byte{0x48, 0x52, 0x1f, 0xbd},
+				fcnt:     2,
+				fopts:    []commands.Fopter{devstatus.NewReq()},
+				adr:      true,
+				ack:      true,
+				fpending: false,
+				foptslen: 1,
+			},
+			fHDRDown([]byte{0xbd, 0x1f, 0x52, 0x48, 0xa1, 0x02, 0x00, 0x06}),
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -193,6 +225,10 @@ func Test_fHDRDown_String(t *testing.T) {
 		{"basic",
 			fHDRDown([]byte{0xbd, 0x1f, 0x52, 0x48, 0xa0, 0x02, 0x00}),
 			"DevAddr: 48521FBD; FCnt: 2; ADR: true; FPending: false; ACK: true; FOptsLen: 0, FOpts: []",
+		},
+		{"basic with devstatusreq",
+			fHDRDown([]byte{0xbd, 0x1f, 0x52, 0x48, 0xa1, 0x02, 0x00, 0x06}),
+			"DevAddr: 48521FBD; FCnt: 2; ADR: true; FPending: false; ACK: true; FOptsLen: 1, FOpts: [DevStatusReq!]",
 		},
 	}
 	for _, tt := range tests {
@@ -256,9 +292,37 @@ func TestParseFOptsDown(t *testing.T) {
 		args args
 		want []commands.Fopter
 	}{
-		{"basic",
+		{"basic-issues warning",
 			args{payload: []byte{0xbd, 0x1f, 0x52, 0x48, 0xa0, 0x02, 0x00}},
 			[]commands.Fopter{},
+		},
+		{"linkcheckans",
+			args{payload: []byte{0x02, 0x14, 0x02}},
+			[]commands.Fopter{linkcheck.NewAns(20, 2)},
+		},
+		{"linkadrreq",
+			args{payload: []byte{0x03, 0x24, 0x00, 0xff, 0x00}},
+			[]commands.Fopter{linkadr.NewReq(2, 4, 0x00ff, 0, 0)},
+		},
+		{"dutycyclereq",
+			args{payload: []byte{0x04, 0x05}},
+			[]commands.Fopter{dutycycle.NewReq(5)},
+		},
+		{"rxparamsetupreq",
+			args{payload: []byte{0x05, 0x35, 0x18, 0x4F, 0x84}},
+			[]commands.Fopter{rxparamsetup.NewReq(3, 5, 8671000)},
+		},
+		{"devstatusreq",
+			args{payload: []byte{0x06}},
+			[]commands.Fopter{devstatus.NewReq()},
+		},
+		{"newchannelreq",
+			args{payload: []byte{0x07, 0x05, 0x18, 0x4F, 0x84, 0x05}},
+			[]commands.Fopter{newchannel.NewReq(5, 8671000, 0, 5)},
+		},
+		{"rxtimingsetupreq",
+			args{payload: []byte{0x08, 0x05}},
+			[]commands.Fopter{rxtimingsetup.NewReq(5)},
 		},
 	}
 	for _, tt := range tests {
