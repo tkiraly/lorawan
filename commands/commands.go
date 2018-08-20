@@ -23,6 +23,8 @@ const (
 	RxTimingSetupAnsCommand
 	//TxParamSetupAnsCommand is the CID of TxParamSetupAns
 	TxParamSetupAnsCommand
+	//DlChannelAnsCommand is the CID of DlChannelAns
+	DlChannelAnsCommand
 )
 
 const (
@@ -42,4 +44,6 @@ const (
 	RxTimingSetupReqCommand
 	//TxParamSetupReqCommand is the CID of TxParamSetupReq
 	TxParamSetupReqCommand
+	//DlChannelReqCommand is the CID of DlChannelReq
+	DlChannelReqCommand
 )
