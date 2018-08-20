@@ -1,19 +1,17 @@
-package mhdr_test
+package mhdr
 
 import (
 	"reflect"
 	"testing"
-
-	"github.com/tkiraly/lorawan/mhdr"
 )
 
 func Test_mHDR_MType(t *testing.T) {
 	tests := []struct {
 		name string
-		m    mhdr.MHDR
-		want mhdr.MType
+		m    MHDR
+		want MType
 	}{
-		{"basic", mhdr.New(mhdr.ConfirmedDataDownMessageType, mhdr.LoRaWANR1MajorVersion), mhdr.ConfirmedDataDownMessageType},
+		{"basic", New(ConfirmedDataDownMessageType, LoRaWANR1MajorVersion), ConfirmedDataDownMessageType},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -27,10 +25,10 @@ func Test_mHDR_MType(t *testing.T) {
 func Test_mHDR_Major(t *testing.T) {
 	tests := []struct {
 		name string
-		m    mhdr.MHDR
-		want mhdr.MajorVersion
+		m    MHDR
+		want MajorVersion
 	}{
-		{"basic", mhdr.New(mhdr.ConfirmedDataDownMessageType, mhdr.LoRaWANR1MajorVersion), mhdr.LoRaWANR1MajorVersion},
+		{"basic", New(ConfirmedDataDownMessageType, LoRaWANR1MajorVersion), LoRaWANR1MajorVersion},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -44,10 +42,10 @@ func Test_mHDR_Major(t *testing.T) {
 func Test_mHDR_ByteArray(t *testing.T) {
 	tests := []struct {
 		name string
-		m    mhdr.MHDR
+		m    MHDR
 		want []byte
 	}{
-		{"basic", mhdr.New(mhdr.ConfirmedDataDownMessageType, mhdr.LoRaWANR1MajorVersion), []byte{0xA0}},
+		{"basic", New(ConfirmedDataDownMessageType, LoRaWANR1MajorVersion), []byte{0xA0}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -65,13 +63,13 @@ func TestParse(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want mhdr.MHDR
+		want MHDR
 	}{
-		{"basic", args{b: 0xA0}, mhdr.New(mhdr.ConfirmedDataDownMessageType, mhdr.LoRaWANR1MajorVersion)},
+		{"basic", args{b: 0xA0}, New(ConfirmedDataDownMessageType, LoRaWANR1MajorVersion)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := mhdr.Parse(tt.args.b); !reflect.DeepEqual(got, tt.want) {
+			if got := Parse(tt.args.b); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Parse() = %v, want %v", got, tt.want)
 			}
 		})
@@ -80,20 +78,20 @@ func TestParse(t *testing.T) {
 
 func TestNew(t *testing.T) {
 	type args struct {
-		mtype mhdr.MType
-		major mhdr.MajorVersion
+		mtype MType
+		major MajorVersion
 	}
 	tests := []struct {
 		name string
 		args args
-		want mhdr.MHDR
+		want MHDR
 	}{
-		{"basic", args{mtype: mhdr.ConfirmedDataDownMessageType, major: mhdr.LoRaWANR1MajorVersion},
-			mhdr.New(mhdr.ConfirmedDataDownMessageType, mhdr.LoRaWANR1MajorVersion)},
+		{"basic", args{mtype: ConfirmedDataDownMessageType, major: LoRaWANR1MajorVersion},
+			New(ConfirmedDataDownMessageType, LoRaWANR1MajorVersion)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := mhdr.New(tt.args.mtype, tt.args.major); !reflect.DeepEqual(got, tt.want) {
+			if got := New(tt.args.mtype, tt.args.major); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("New() = %v, want %v", got, tt.want)
 			}
 		})
