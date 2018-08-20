@@ -122,9 +122,9 @@ func ParseFOptsUp(payload []byte) []commands.Fopter {
 		case commands.NewChannelAnsCommand:
 			r = append(r, newchannel.ParseAns(payload[i:i+newchannel.Anslen]))
 			i += newchannel.Anslen
-		case commands.RxTimingSetupReqCommand:
-			r = append(r, rxtimingsetup.ParseReq(payload[i:i+rxtimingsetup.Reqlen]))
-			i += rxtimingsetup.Reqlen
+		case commands.RxTimingSetupAnsCommand:
+			r = append(r, rxtimingsetup.ParseAns(payload[i:i+rxtimingsetup.Anslen]))
+			i += rxtimingsetup.Anslen
 		default:
 			log.Printf("WARNING: unknown MAC command id: %d, stopped parsing MAC commands", payload[i])
 			return r
