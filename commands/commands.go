@@ -36,6 +36,6 @@ const (
 	DevStatusReqCommand
 	//NewChannelReqCommand is the CID of NewChannelReq
 	NewChannelReqCommand
-	//RXTimingSetupReqCommand is the CID of TXTimingSetupReq
+	//RxTimingSetupReqCommand is the CID of TXTimingSetupReq
 	RxTimingSetupReqCommand
 )
