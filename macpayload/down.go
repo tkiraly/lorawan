@@ -176,10 +176,12 @@ func ParseDown(p, nwkskey, appskey []byte) (DataDown, error) {
 		if *du.FPort() == 0 {
 			key = nwkskey
 		}
-		fpay := endataMessage(du.FRMPayload(), false, du.DevAddr(), uint32(du.FCnt()), key)
-		start := int(1 + 7 + du.FOptsLen() + 1)
-		finish := len(du.bytes) - 4
-		copy(du.bytes[start:finish], fpay)
+		if key != nil {
+			fpay := endataMessage(du.FRMPayload(), false, du.DevAddr(), uint32(du.FCnt()), key)
+			start := int(1 + 7 + du.FOptsLen() + 1)
+			finish := len(du.bytes) - 4
+			copy(du.bytes[start:finish], fpay)
+		}
 	}
 	return du, nil
 }

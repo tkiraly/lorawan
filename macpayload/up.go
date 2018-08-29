@@ -170,10 +170,12 @@ func ParseUp(p, nwkskey, appskey []byte) (DataUp, error) {
 		if *du.FPort() == 0 {
 			key = nwkskey
 		}
-		fpay := endataMessage(du.FRMPayload(), true, du.DevAddr(), uint32(du.FCnt()), key)
-		start := int(1 + 7 + du.FOptsLen() + 1)
-		finish := len(du.bytes) - 4
-		copy(du.bytes[start:finish], fpay)
+		if key != nil {
+			fpay := endataMessage(du.FRMPayload(), true, du.DevAddr(), uint32(du.FCnt()), key)
+			start := int(1 + 7 + du.FOptsLen() + 1)
+			finish := len(du.bytes) - 4
+			copy(du.bytes[start:finish], fpay)
+		}
 	}
 	return du, nil
 }
